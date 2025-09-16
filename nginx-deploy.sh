@@ -44,6 +44,7 @@ exit_on_error() {
 check_root() {
     if [[ $EUID -eq 0 ]]; then
        # exit_on_error "请不要使用root用户运行此脚本"
+       log_info "root用户运行"
     fi
 }
 
