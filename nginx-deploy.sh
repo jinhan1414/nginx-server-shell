@@ -42,10 +42,7 @@ exit_on_error() {
 
 # 检查是否为root用户
 check_root() {
-    if [[ $EUID -eq 0 ]]; then
-       # exit_on_error "请不要使用root用户运行此脚本"
-       log_info "root用户运行"
-    fi
+    log_info "root用户运行"
 }
 
 # 检测容器引擎和Compose工具
