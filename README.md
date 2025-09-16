@@ -49,9 +49,11 @@ sudo apt update && sudo apt install curl
 # 创建工作目录
 mkdir -p /your-services/nginx
 cd /your-services/nginx
-
+# 直接下载并执行
+curl -fsSL https://raw.githubusercontent.com/jinhan1414/nginx-server-shell/main/nginx-deploy.sh | bash
 # 下载脚本 (替换为实际下载链接)
-wget https://your-domain/nginx-deploy.sh
+curl -fsSL https://raw.githubusercontent.com/jinhan1414/nginx-server-shell/main/nginx-deploy.sh -o nginx-deploy.sh
+
 # 或者直接创建文件并复制脚本内容
 
 # 赋予执行权限
