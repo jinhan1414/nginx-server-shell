@@ -296,7 +296,7 @@ add_backend_service() {
     log_question "请输入要添加的服务信息："
     
     read -p "子域名 (如: gpt-load): " subdomain
-    read -p "主域名 (如: 141464.xyz): " domain
+    read -p "主域名 (如: xxx.xyz): " domain
     read -p "后端容器名 (如: gpt-load-app): " container_name
     read -p "后端端口 (如: 3001): " port
     
