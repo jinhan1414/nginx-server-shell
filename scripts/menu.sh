@@ -38,9 +38,6 @@ init_nginx() {
     mkdir -p "$NGINX_DIR/data/certbot/certs"
     mkdir -p "$NGINX_DIR/data/nginx-logs"
     
-    generate_base_config
-    create_compose_file
-    create_network
     
     cd "$NGINX_DIR"
     log_info "启动Nginx容器..."
@@ -63,7 +60,7 @@ init_nginx() {
         sleep 5
     done
     
-    exit_on_error "Nginx启动失败，请检查日志: $COMPOSE_CMD logs nginx-proxy"
+    exit_on_error "Nginx启动失败，请检查日志: $COMPOSE_CMD logs nginx"
 }
 
 
@@ -111,7 +108,7 @@ run_main_loop() {
                 case $log_choice in
                     1) $CONTAINER_ENGINE exec $CONTAINER_NAME tail -f /var/log/nginx/access.log ;;
                     2) $CONTAINER_ENGINE exec $CONTAINER_NAME tail -f /var/log/nginx/error.log ;;
-                    3) cd "$NGINX_DIR"; $COMPOSE_CMD logs -f nginx-proxy ;;
+                    3) cd "$NGINX_DIR"; $COMPOSE_CMD logs -f nginx ;;
                     4) cd "$NGINX_DIR"; $COMPOSE_CMD logs -f certbot-service ;;
                     *) log_error "无效选择" ;;
                 esac

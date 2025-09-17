@@ -28,7 +28,7 @@ EOF
         sleep 5
     else
         log_info "重启Nginx以强制加载临时验证配置..."
-        cd "$NGINX_DIR"; $COMPOSE_CMD restart nginx-proxy || { log_error "Nginx重启失败"; rm -f "$temp_conf_file"; return 1; }
+        cd "$NGINX_DIR"; $COMPOSE_CMD restart nginx || { log_error "Nginx重启失败"; rm -f "$temp_conf_file"; return 1; }
         # 重启需要更长的等待时间
         sleep 8
     fi
