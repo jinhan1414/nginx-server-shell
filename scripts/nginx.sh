@@ -73,17 +73,14 @@ EOF
     }
 EOF
     else
+        # 在 Let's Encrypt 模式下，acme-challenge 的处理逻辑将直接注入到服务配置中
+        # 这里只需要一个最终的捕获所有请求的服务器
         cat >> "$NGINX_DIR/nginx.conf" << 'EOF'
     server {
         listen 80 default_server;
         server_name _;
-        location /.well-known/acme-challenge/ {
-            root /var/www/certbot;
-        }
-        location / {
-            access_log /var/log/nginx/http_requests.log main;
-            return 404;
-        }
+        access_log /var/log/nginx/blocked.log main;
+        return 444;
     }
 EOF
     fi
@@ -136,7 +133,15 @@ add_backend_service() {
 upstream ${subdomain}-backend { server ${container_name}:${port}; }
 server {
     listen 80; server_name ${FULL_DOMAIN};
-    location / { return 301 https://\$host\$request_uri; }
+
+    # 优先处理 Let's Encrypt 的 HTTP-01 验证
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        return 301 https://\$host\$request_uri;
+    }
 }
 server {
     listen 443 ssl http2; server_name ${FULL_DOMAIN};
