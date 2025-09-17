@@ -47,7 +47,7 @@ EOF
     if [[ "$SSL_MODE" == "letsencrypt" ]]; then
         cat >> "$NGINX_DIR/docker-compose.yml" << EOF
       - ./data/certbot/certs:/etc/letsencrypt:ro${podman_opts}
-      - ./data/certbot/www:/var/www/certbot:ro${podman_opts}
+      - ./data/certbot/www:/var/www/certbot${podman_opts}
 EOF
     fi
 
