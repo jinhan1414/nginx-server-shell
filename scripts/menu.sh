@@ -18,6 +18,9 @@ show_menu() {
     echo "7. 修改脚本配置"
     echo "8. 测试Nginx配置"
     echo "9. 查看容器状态"
+    if [[ "$SSL_MODE" == "letsencrypt" ]]; then
+        echo "10. 查看已安装证书"
+    fi
     echo "0. 退出"
     echo "=================================================="
 }
@@ -140,6 +143,13 @@ run_main_loop() {
                 ;;
             9)
                 show_container_status
+                ;;
+            10)
+                if [[ "$SSL_MODE" == "letsencrypt" ]]; then
+                    show_certificates
+                else
+                    log_error "此功能仅在 Let's Encrypt 模式下可用"
+                fi
                 ;;
             0)
                 log_info "退出脚本"

@@ -147,6 +147,7 @@ http://gpt-load.xxx.xyz
 7. 修改脚本配置
 8. 测试Nginx配置
 9. 查看容器状态
+10. 查看已安装证书 (仅Let's Encrypt模式)
 0. 退出
 ```
 
@@ -173,6 +174,12 @@ http://gpt-load.xxx.xyz
 1. 确保你的域名A记录已正确指向服务器IP。可以使用 `ping your-domain.com` 来检查。
 2. 确保你的服务器防火墙已开放 80 和 443 端口。
 3. 检查 Certbot 容器日志：`./nginx-deploy.sh` -> 菜单 5 -> 3. 容器日志 -> 选择 certbot。
+
+### Q: 如何检查SSL证书是否生效？
+**A**: 有多种方法：
+1.  **使用脚本菜单 (推荐)**: 运行脚本并选择 "10. 查看已安装证书"，可以列出所有证书的域名和到期日。
+2.  **浏览器检查**: 用 `https://` 访问你的域名，点击地址栏的锁图标查看证书信息。
+3.  **在线工具**: 使用 SSL Labs SSL Test 等网站对你的域名进行全面检测。
 
 ### Q: 在 Podman 环境下出现 CNI 或 firewall 相关的错误？
 **A**: 错误如 `plugin firewall does not support config version "1.0.0"` 通常意味着您系统中的 CNI (Container Network Interface) 插件版本过旧。

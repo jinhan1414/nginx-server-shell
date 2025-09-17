@@ -29,3 +29,10 @@ request_certificate() {
         return 1
     fi
 }
+
+# 显示已安装的证书
+show_certificates() {
+    log_info "正在查询已安装的证书..."
+    cd "$NGINX_DIR"
+    $COMPOSE_CMD run --rm certbot certificates
+}
