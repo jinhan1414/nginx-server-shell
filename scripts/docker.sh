@@ -71,10 +71,9 @@ EOF
     volumes:
       - ./data/certbot/certs:/etc/letsencrypt${podman_opts}
       - ./data/certbot/www:/var/www/certbot${podman_opts}
-    # 使用 command 使其成为一个常驻服务，以兼容 podman-compose run
-    # 并定期执行续订检查
-    command: |
-      /bin/sh -c 'trap exit TERM; while :; do certbot renew --quiet; sleep 12h & wait $${!}; done;'
+    # Certbot 容器只在需要时通过 'run' 启动，不作为常驻服务
+    # 定期续订将通过一个独立的 cron 任务或 systemd timer 实现
+    command: sleep infinity
 EOF
     fi
 

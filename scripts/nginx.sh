@@ -135,8 +135,9 @@ server {
     listen 80; server_name ${FULL_DOMAIN};
 
     # 优先处理 Let's Encrypt 的 HTTP-01 验证
+    # 将请求反向代理到 Certbot 容器
     location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
+        proxy_pass http://certbot-service:8080;
     }
 
     location / {

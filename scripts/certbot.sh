@@ -7,7 +7,7 @@ request_certificate() {
     
     log_info "为域名 $domain 申请SSL证书..."
     
-    # 确保Nginx容器正在运行以进行HTTP-01验证
+    # 确保Nginx容器正在运行以进行反向代理
     if ! $CONTAINER_ENGINE ps --format "{{.Names}}" | grep -q "^${CONTAINER_NAME}$"; then
         log_warn "Nginx容器未运行，正在启动..."
         cd "$NGINX_DIR"
@@ -18,7 +18,8 @@ request_certificate() {
         sleep 5
     fi
 
-    local certbot_cmd="$COMPOSE_CMD run --rm --entrypoint \"/bin/sh -c 'mkdir -p /var/www/certbot && certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m $email -d $domain'\" certbot"
+    # 使用 standalone 模式，临时暴露端口让 Nginx 可以反向代理
+    local certbot_cmd="$COMPOSE_CMD run --rm -p 8080:8080 certbot certonly --standalone --http-01-port 8080 --non-interactive --agree-tos -m $email -d $domain"
 
     if eval $certbot_cmd; then
         log_info "证书申请成功: $domain"
