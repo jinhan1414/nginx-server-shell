@@ -73,15 +73,20 @@ EOF
 
 # 加载或创建配置
 load_or_create_config() {
-    if [[ ! -f "$CONFIG_FILE" ]]; then
-        run_setup_wizard
-    fi
-    
-    # 加载配置
     if [[ -f "$CONFIG_FILE" ]]; then
         source "$CONFIG_FILE"
-        log_info "已加载配置: SSL_MODE=$SSL_MODE"
-    else
-        exit_on_error "配置文件 $CONFIG_FILE 不存在，无法继续。"
+    fi
+
+    # 健壮性检查：如果文件存在但模式为空，则强制重新设置
+    if [[ -z "$SSL_MODE" ]]; then
+        log_warn "SSL_MODE 未设置或配置文件无效，启动设置向导..."
+        run_setup_wizard
+        # 重新加载新生成的配置
+        source "$CONFIG_FILE"
+    fi
+
+    log_info "已加载配置: SSL_MODE=$SSL_MODE"
+    if [[ -z "$SSL_MODE" ]]; then
+        exit_on_error "配置加载失败，无法确定SSL模式。"
     fi
 }
