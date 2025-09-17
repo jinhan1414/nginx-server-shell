@@ -228,13 +228,15 @@ EOF
     log_info "已创建配置文件: $FULL_DOMAIN -> $container_name:$port"
     
     if $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -t; then
-        if $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -s reload; then
-            log_info "Nginx配置已成功重载"
+        log_info "Nginx配置测试通过，正在重启以应用最终配置..."
+        cd "$NGINX_DIR"
+        if $COMPOSE_CMD restart nginx-proxy; then
+            log_info "Nginx已成功重启"
         else
-            log_error "Nginx重载失败"
+            log_error "Nginx重启失败"
         fi
     else
-        log_error "Nginx配置测试失败"
+        log_error "最终生成的Nginx配置测试失败，请检查。"
     fi
 }
 
@@ -270,11 +272,12 @@ remove_service() {
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         rm -f "$CONFIG_FILE"
         log_info "服务 $service_name 的配置文件已删除。"
-        log_info "正在重载Nginx..."
-        if $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -t && $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -s reload; then
-            log_info "Nginx已重载。"
+        log_info "正在重启Nginx以应用更改..."
+        cd "$NGINX_DIR"
+        if $COMPOSE_CMD restart nginx-proxy; then
+            log_info "Nginx已重启。"
         else
-            log_error "Nginx重载失败，请检查配置。"
+            log_error "Nginx重启失败，请检查配置。"
         fi
     else
         log_info "取消删除操作"

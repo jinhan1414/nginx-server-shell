@@ -27,8 +27,10 @@ EOF
         cd "$NGINX_DIR"; $COMPOSE_CMD up -d nginx || { log_error "启动Nginx失败"; rm -f "$temp_conf_file"; return 1; }
         sleep 5
     else
-        log_info "重载Nginx以应用临时验证配置..."
-        $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -s reload || { log_error "Nginx重载失败"; rm -f "$temp_conf_file"; return 1; }
+        log_info "重启Nginx以强制加载临时验证配置..."
+        cd "$NGINX_DIR"; $COMPOSE_CMD restart nginx-proxy || { log_error "Nginx重启失败"; rm -f "$temp_conf_file"; return 1; }
+        # 重启需要更长的等待时间
+        sleep 8
     fi
     
     # 3. 运行Certbot进行验证
