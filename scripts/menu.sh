@@ -3,24 +3,17 @@
 # 主菜单
 show_menu() {
     echo
-    echo "========== Nginx 部署管理脚本 (模式: $SSL_MODE) =========="
+    echo "========== Nginx + Let's Encrypt 部署管理脚本 =========="
     echo "工作目录: $NGINX_DIR"
-    echo "1. 添加后端服务"
+    echo "1. 添加/更新服务"
     echo "2. 列出现有服务"
     echo "3. 删除服务"
-    echo "4. 重启Nginx及所有服务"
+    echo "4. 重启所有服务"
     echo "5. 查看日志"
-    if [[ "$SSL_MODE" == "letsencrypt" ]]; then
-        echo "6. 手动续订所有SSL证书"
-    elif [[ "$SSL_MODE" == "cloudflare" ]]; then
-        echo "6. 更新Cloudflare IP"
-    fi
-    echo "7. 修改脚本配置"
-    echo "8. 测试Nginx配置"
-    echo "9. 查看容器状态"
-    if [[ "$SSL_MODE" == "letsencrypt" ]]; then
-        echo "10. 查看已安装证书"
-    fi
+    echo "6. 手动续订所有证书"
+    echo "7. 测试Nginx配置"
+    echo "8. 查看容器状态"
+    echo "9. 查看已安装证书"
     echo "0. 退出"
     echo "=================================================="
 }
@@ -79,7 +72,6 @@ run_main_loop() {
     check_root
     check_curl
     
-    load_or_create_config
     detect_container_engine
     
     log_info "脚本工作目录: $NGINX_DIR"
@@ -110,46 +102,33 @@ run_main_loop() {
                 ;;
             5)
                 echo "选择日志类型："
-                echo "1. 访问日志"
-                echo "2. 错误日志"
-                echo "3. 容器日志"
-                read -p "请选择 [1-3]: " log_choice
+                echo "1. Nginx访问日志"
+                echo "2. Nginx错误日志"
+                echo "3. Nginx容器日志"
+                echo "4. Certbot容器日志"
+                read -p "请选择 [1-4]: " log_choice
                 
                 case $log_choice in
                     1) $CONTAINER_ENGINE exec $CONTAINER_NAME tail -f /var/log/nginx/access.log ;;
                     2) $CONTAINER_ENGINE exec $CONTAINER_NAME tail -f /var/log/nginx/error.log ;;
-                    3) cd "$NGINX_DIR"; $COMPOSE_CMD logs -f ;;
+                    3) cd "$NGINX_DIR"; $COMPOSE_CMD logs -f nginx-proxy ;;
+                    4) cd "$NGINX_DIR"; $COMPOSE_CMD logs -f certbot-service ;;
                     *) log_error "无效选择" ;;
                 esac
                 ;;
             6)
-                if [[ "$SSL_MODE" == "letsencrypt" ]]; then
-                    log_info "手动续订所有SSL证书..."
-                    cd "$NGINX_DIR"; $COMPOSE_CMD run --rm certbot renew
-                elif [[ "$SSL_MODE" == "cloudflare" ]]; then
-                    log_info "更新Cloudflare IP并重启..."
-                    generate_base_config
-                    cd "$NGINX_DIR"; $COMPOSE_CMD restart
-                fi
+                log_info "手动续订所有SSL证书..."
+                cd "$NGINX_DIR"; $COMPOSE_CMD run --rm certbot renew
                 ;;
             7)
-                change_ssl_mode
-                # 重新加载配置以更新菜单显示
-                source "$CONFIG_FILE"
-                ;;
-            8)
                 log_info "测试Nginx配置..."
                 $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -t
                 ;;
-            9)
+            8)
                 show_container_status
                 ;;
-            10)
-                if [[ "$SSL_MODE" == "letsencrypt" ]]; then
-                    show_certificates
-                else
-                    log_error "此功能仅在 Let's Encrypt 模式下可用"
-                fi
+            9)
+                show_certificates
                 ;;
             0)
                 log_info "退出脚本"
