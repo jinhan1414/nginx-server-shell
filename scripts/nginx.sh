@@ -74,7 +74,7 @@ EOF
     if $CONTAINER_ENGINE exec $CONTAINER_NAME nginx -t; then
         log_info "Nginx配置测试通过，正在重启以应用最终配置..."
         cd "$NGINX_DIR"
-        if $COMPOSE_CMD restart nginx-proxy; then
+        if $COMPOSE_CMD restart nginx; then
             log_info "Nginx已成功重启"
         else
             log_error "Nginx重启失败"
@@ -118,7 +118,7 @@ remove_service() {
         log_info "服务 $service_name 的配置文件已删除。"
         log_info "正在重启Nginx以应用更改..."
         cd "$NGINX_DIR"
-        if $COMPOSE_CMD restart nginx-proxy; then
+        if $COMPOSE_CMD restart nginx; then
             log_info "Nginx已重启。"
         else
             log_error "Nginx重启失败，请检查配置。"
