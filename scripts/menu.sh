@@ -130,8 +130,8 @@ run_main_loop() {
                 fi
                 ;;
             7)
-                run_setup_wizard
-                log_info "配置已更新，建议重启服务以应用所有更改 (选项4)"
+                change_ssl_mode
+                # 重新加载配置以更新菜单显示
                 source "$CONFIG_FILE"
                 ;;
             8)
