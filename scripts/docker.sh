@@ -40,7 +40,7 @@ EOF
     cat >> "$NGINX_DIR/docker-compose.yml" << EOF
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro${podman_opts}
-      - ./conf.d:/etc/nginx/conf.d:ro${podman_opts}
+      - ./conf.d:/etc/nginx/conf.d:rw${podman_opts}
       - ./data/nginx-logs:/var/log/nginx${podman_opts}
 EOF
 
