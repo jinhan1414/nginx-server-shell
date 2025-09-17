@@ -32,7 +32,8 @@ EOF
     fi
     
     # 3. 运行Certbot进行验证
-    local certbot_cmd="$COMPOSE_CMD run --rm --entrypoint \"/bin/sh -c 'certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m $email -d $domain'\" certbot"
+    # 3. 运行Certbot进行验证，并在执行前确保目录存在
+    local certbot_cmd="$COMPOSE_CMD run --rm --entrypoint \"/bin/sh -c 'mkdir -p /var/www/certbot && certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m $email -d $domain'\" certbot"
     
     local success=0
     if eval $certbot_cmd; then
