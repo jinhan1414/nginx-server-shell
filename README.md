@@ -174,6 +174,14 @@ http://gpt-load.xxx.xyz
 2. 确保你的服务器防火墙已开放 80 和 443 端口。
 3. 检查 Certbot 容器日志：`./nginx-deploy.sh` -> 菜单 5 -> 3. 容器日志 -> 选择 certbot。
 
+### Q: 在 Podman 环境下出现 CNI 或 firewall 相关的错误？
+**A**: 错误如 `plugin firewall does not support config version "1.0.0"` 通常意味着您系统中的 CNI (Container Network Interface) 插件版本过旧。
+- **解决方案**: 尝试更新 `podman` 和 `cni-plugins` 到最新版本。在基于 RHEL 的系统 (如 CentOS, Fedora) 上，可以运行：
+  ```bash
+  sudo dnf update podman cni-plugins
+  ```
+- 如果问题仍然存在，您可能需要检查 `/etc/cni/net.d/` 目录下的网络配置文件，或考虑重置 CNI 配置。
+
 ## 高级配置与模式切换
 
 你可以随时通过运行 `./nginx-deploy.sh` 并选择菜单 "7. 修改脚本配置" 来更改 SSL 模式或相关配置。注意，切换模式后，可能需要重启 Nginx 服务来使所有更改生效。

@@ -18,7 +18,7 @@ request_certificate() {
         sleep 5
     fi
 
-    local certbot_cmd="$COMPOSE_CMD run --rm --entrypoint \"certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m $email -d $domain\" certbot"
+    local certbot_cmd="$COMPOSE_CMD run --rm certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos -m $email -d $domain"
 
     if eval $certbot_cmd; then
         log_info "证书申请成功: $domain"
