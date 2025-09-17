@@ -5,7 +5,7 @@ add_backend_service() {
     log_question "请输入要添加的服务信息："
     read -p "您的邮箱地址 (用于Let's Encrypt提醒): " email
     read -p "子域名 (如: gpt-load): " subdomain
-    read -p "主域名 (如: 141464.xyz): " domain
+    read -p "主域名 (如: xxx.xyz): " domain
     read -p "后端服务地址 (如: 192.168.1.97:3001): " backend_address
     
     if [[ -z "$email" || -z "$subdomain" || -z "$domain" || -z "$backend_address" ]]; then
