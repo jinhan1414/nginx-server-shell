@@ -18,8 +18,9 @@ request_certificate() {
         sleep 5
     fi
 
-    # 使用 standalone 模式，临时暴露端口让 Nginx 可以反向代理
-    local certbot_cmd="$COMPOSE_CMD run --rm -p 8081:8081 certbot certonly --standalone --http-01-port 8081 --non-interactive --agree-tos -m $email -d $domain"
+    # 使用 standalone 模式，Certbot 在容器网络内部监听 8081 端口
+    # Nginx 将验证请求反向代理到它，无需将端口暴露到主机
+    local certbot_cmd="$COMPOSE_CMD run --rm certbot certonly --standalone --http-01-port 8081 --non-interactive --agree-tos -m $email -d $domain"
 
     if eval $certbot_cmd; then
         log_info "证书申请成功: $domain"
